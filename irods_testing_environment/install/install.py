@@ -277,13 +277,16 @@ def install_pip_package_from_repo(container,
     repo_name -- name of the git repository to clone
     branch -- branch to checkout in cloned git repository
     """
+    from .. import container_info
     from .. import services
 
     repo_path = services.clone_repository_to_container(container,
                                                        repo_name,
                                                        url_base=url_base,
                                                        branch=branch)
-    ec = execute.execute_command(container, 'pip install -e {}'.format(repo_path))
+    ec = execute.execute_command(container, ' '.join(
+                                 [container_info.python(container),
+                                  '-m', 'pip', 'install', repo_path]))
     if ec is not 0:
         raise RuntimeError('Failed to install pip package [{}] [{}]'
                            .format(repo_path, container.name))
