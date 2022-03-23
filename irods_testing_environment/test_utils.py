@@ -154,7 +154,9 @@ def run_test_hook_file_in_container(container, path_to_test_hook, options=None):
     path_to_test_hook -- path in the container for the test hook file
     options -- list of strings representing script options to pass to the run_tests.py script
     """
-    install.install_pip_package_from_repo(container, 'irods_python_ci_utilities')
+    install.install_pip_package_from_repo(container, 'irods_python_ci_utilities',  
+                                          # --D.M.-- temporarily point at alanking branch with fix for copied_from_ansible import error
+                                          url_base='https://github.com/alanking', branch='py3')
 
     command = ['python3', path_to_test_hook]
 
@@ -200,10 +202,10 @@ def get_test_list(container):
                                          )
 
 
-def python(container):
+def python(container,name='python'):
     """Return command to run python appropriately per detected iRODS version in `container`."""
     from . import irods_config
 
     major, minor, patch = irods_config.get_irods_version(container)
 
-    return 'python' if minor < 3 else 'python3'
+    return name if minor < 3 else name+'3'

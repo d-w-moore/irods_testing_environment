@@ -103,12 +103,15 @@ try:
     options = ['--output_root_directory', output_directory,
                '--built_packages_root_directory', plugin_package_directory]
 
+
+
     if args.test_hook:
         rc = test_utils.run_test_hook_file(container, args.test_hook, options)
     else:
         rc = test_utils.run_test_hook(container,
                                       args.plugin_name,
-                                      branch='4-2-stable',
+                                      branch='4-2-stable', # --> note to Alan : in the unified 4-2-stable / main branch,
+#                                     branch='main',       #     should this be a parameter ? - D.M.
                                       options=options)
 
 except Exception as e:
