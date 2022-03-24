@@ -96,8 +96,7 @@ try:
                                           [plugin_package_directory],
                                           args.plugin_name))
 
-    options = ['--output_root_directory', output_directory,
-               '--built_packages_root_directory', plugin_package_directory]
+    options = ['--built_packages_root_directory', plugin_package_directory]
 
     rc = test_utils.run_plugin_tests(containers,
                                      args.plugin_name,
