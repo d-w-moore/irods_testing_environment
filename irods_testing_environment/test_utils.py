@@ -10,7 +10,6 @@ from . import context
 from . import execute
 from . import services
 from . import test_manager
-from .install import install
 
 def job_name(project_name, prefix=None):
     """Construct unique job name based on the docker-compose project name.
