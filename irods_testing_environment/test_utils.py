@@ -191,7 +191,7 @@ def get_plugin_test_list(container):
     return []
 
 
-def discover_tests(container):
+def _discover_tests(container):
     import os
     import unittest
 
@@ -221,3 +221,31 @@ def discover_tests(container):
     logging.info('>>> test list done <<<')
 
     return tests
+
+
+def discover_tests(container):
+    import os
+    import unittest
+
+    from . import archive
+
+    # TODO: we have to copy the python file!
+
+    cmd = 'bash -c \'python3 /discover.py > /testlist\''
+
+    ec = execute.execute_command(container, cmd,
+                                 workdir=context.irods_scripts_directory(),
+                                 stream_output=True)
+
+    test_list_file = os.path.join(
+        archive.copy_from_container(container, path_to_source_on_container='/testlist'),
+        'testlist')
+
+    test_list = list()
+    with open(test_list_file, mode='r') as f:
+        for l in f:
+            line = l.rstrip('\n')
+            logging.info(f'line: [{line}]')
+            test_list.append(line)
+
+    return test_list
