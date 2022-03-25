@@ -119,10 +119,16 @@ def service_account_irods_env():
     return os.path.join(irods_home(), '.irods', 'irods_environment.json')
 
 
+def irods_scripts_directory():
+    """Return the path to the directory holding the packaged iRODS scripts."""
+    import os
+    return os.path.join(irods_home(), 'scripts')
+
+
 def run_tests_script():
     """Return the path to the script which runs the python tests."""
     import os
-    return os.path.join(irods_home(), 'scripts', 'run_tests.py')
+    return os.path.join(irods_scripts_directory(), 'run_tests.py')
 
 
 def unit_tests():

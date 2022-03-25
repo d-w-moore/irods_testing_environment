@@ -171,13 +171,16 @@ def get_test_list(container):
     Arguments:
     container -- target container from which test list will be extracted
     """
-    from . import json_utils
-    return json_utils.get_json_from_file(container,
-                                         os.path.join(
-                                             context.irods_home(),
-                                             'scripts',
-                                             'core_tests_list.json')
-                                         )
+    #from . import json_utils
+    #return json_utils.get_json_from_file(container,
+                                         #os.path.join(
+                                             #context.irods_home(),
+                                             #'scripts',
+                                             #'core_tests_list.json')
+                                         #)
+    return discover_tests(container)
+
+
 def get_plugin_test_list(container):
     """Return list of tests extracted from core_tests_list.json file in `container`.
 
@@ -186,3 +189,35 @@ def get_plugin_test_list(container):
     """
     # TODO: implement unittest discovery a la PRC
     return []
+
+
+def discover_tests(container):
+    import os
+    import unittest
+
+    from . import archive
+
+    scripts_dir = archive.copy_from_container(container, context.irods_home())
+    logging.info(f'downloaded scripts to [{scripts_dir}]')
+
+    loader = unittest.TestLoader()
+    #suite = loader.discover(os.path.join(scripts_dir, 'scripts'), pattern='test_*.py')
+    discovery = loader.discover(os.path.join(scripts_dir, 'irods/scripts'), pattern='test_*.py')
+    tests = list()
+    for m in discovery:
+        logging.debug(f'found module: [{m}]')
+        for s in m._tests:
+            logging.debug(f'found suite: [{s}]')
+            for t in s._tests:
+                logging.debug(f'found test: [{t}]')
+                module = t.__module__
+                cls = t.__class__.__name__
+                test = t._testMethodName
+                t = '.'.join([module, cls, test])
+                tests.append('.'.join(t.split('.')[2:]))
+
+    logging.info('>>> test list here <<<')
+    logging.info(tests)
+    logging.info('>>> test list done <<<')
+
+    return tests
